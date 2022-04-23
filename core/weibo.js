@@ -80,7 +80,7 @@ exports.getUIDByDomain = function (domain) {
   return axios.get(`https://m.weibo.cn/${domain}?&jumpfrom=weibocom`, {
     timeout: 3000,
     headers: {
-      'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A356 Safari/604.1'
+      'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.3 Mobile/15E148 Safari/604.1'
     },
   }).then(res => {
     const uid = res.request.path.split("/u/")[1];
@@ -197,7 +197,7 @@ async function getByIndexAPI(uid) {
       headers: {
         'MWeibo-Pwa': 1,
         'Referer': `https://m.weibo.cn/u/${uid}`,
-        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1',
+        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.3 Mobile/15E148 Safari/604.1',
         'X-Requested-With': 'XMLHttpRequest'
       }
     }).then(({ data }) => {
@@ -252,7 +252,7 @@ async function getIndexUserInfo(uid) {
     headers: {
       'MWeibo-Pwa': 1,
       'Referer': `https://m.weibo.cn/u/${uid}`,
-      'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1',
+      'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.3 Mobile/15E148 Safari/604.1',
       'X-Requested-With': 'XMLHttpRequest'
     }
   }).then(({ data }) => {
@@ -321,7 +321,7 @@ async function getWeiboDetail(id) {
     headers: {
       'MWeibo-Pwa': 1,
       'Referer': `https://m.weibo.cn/detail/${id}`,
-      'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1',
+      'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.3 Mobile/15E148 Safari/604.1',
       'X-Requested-With': 'XMLHttpRequest'
     }
   }).then(res => {
