@@ -14,7 +14,8 @@ app.use(async (ctx, next) => {
   const startTime = Date.now();
   logger.debug(`${ctx.req.method} ${ctx.originalUrl} ${ctx.ip}`);
   await next();
-  logger.info(`[${ctx.status}] ${ctx.req.method} ${ctx.originalUrl} ${ctx.ip} ${Date.now() - startTime}ms`);
+  const hitLog = ctx.state.hitCache !== undefined ? ' hit: ' + ctx.state.hitCache : '';
+  logger.info(`[${ctx.status}] ${ctx.req.method} ${ctx.originalUrl} ${ctx.ip}${hitLog} ${Date.now() - startTime}ms`);
 });
 
 app.use(serve(__dirname + '/public'));

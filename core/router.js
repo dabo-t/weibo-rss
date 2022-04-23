@@ -61,7 +61,6 @@ async function getWeiboRSS(ctx) {
       throw 'user_not_found';
     }
     // start
-    let startTime = Date.now();
     let hitCache = 0;
     let key = `total-${uid}${largePic ? '' : '-small'}${emoji ? '-emoji' : ''}`;
     const rssData = await cache.get(key).then(function (result) {
@@ -82,7 +81,7 @@ async function getWeiboRSS(ctx) {
         });
       }
     });
-    logger.info(`hit: ${hitCache}, ${Date.now() - startTime}ms, get ${uid} ${ip}`);
+    ctx.state.hitCache = hitCache;
     // send data
     ctx.set('Content-Type', 'text/xml');
     ctx.body = rssData;
