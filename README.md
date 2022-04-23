@@ -1,8 +1,6 @@
 # weibo-rss
 
-微博 RSS 订阅源生成器，可将某人最近发布的微博转换为符合 RSS Feed 标准的格式订阅。  
-支持长微博、所有配图、链接的完整输出。  
-致力于一目了然的微博阅读体验。  
+微博 RSS 订阅源生成器，可将某人最近发布的微博转换为符合 RSS Feed 标准的格式订阅。
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
@@ -29,7 +27,7 @@ pm2 start bin/www
 
 ## 赞助
 
-若本项目为你的生活增添了许多便利，不妨考虑支持一下作者？  
+若本项目为你的生活增添了便利，不妨考虑支持一下作者？  
 [赞助作者](https://blog.izgq.net/donate.html)
 
 ## License
