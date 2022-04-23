@@ -3,6 +3,9 @@
 // 还原相对此刻的时间
 // from: https://github.com/DIYgod/RSSHub/blob/4e5f50fe56849ff53f8f379fc46ce6febf22591f/lib/utils/date.js
 // 
+
+const logger = require("./logger");
+
 // 格式化 类型这个的时间 ， 几分钟前 | 几小时前 | 几天前 | 几月前 | 几年前 | 具体的格式不对的时间
 const serverOffset = new Date().getTimezoneOffset() / 60;
 
@@ -115,7 +118,16 @@ exports.formatStatus = (status, largePic = true, emoji = false) => {
 
   // 微博配图
   if (status.pics) {
-    status.pics.forEach(function (item) {
+    let photoArr = [];
+    if (typeof status.pics === 'object' && !Array.isArray(status.pics)) {
+      // ignore: type = 'livephotos'
+      photoArr = Object.values(status.pics)
+        .filter(pic => pic.type !== 'livephotos');
+      logger.info('live:', status.id);
+    } else {
+      photoArr = [...status.pics];
+    }
+    photoArr.forEach(function (item) {
       tempHTML += "<br><br>";
       tempHTML += '<a href="' + item.large.url + '" target="_blank"><img src="' + (largePic ? item.large.url : item.url) + '" referrerpolicy="no-referrer"></a>';
     });

@@ -328,7 +328,7 @@ async function getWeiboDetail(id) {
     data = res.data.data;
     return data;
   }).catch(err => {
-    if (err.response && err.response.status === 418) {
+    if (err.response && [418, 403].includes(err.response.status)) {
       avaliableMethod.disable('weiboDetail');
       return;
     } else {
