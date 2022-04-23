@@ -101,8 +101,8 @@ async function getWeiboData(uid) {
 
   // result
   let weiboData;
-  let userNotExist = resultList.every(item => item.userNotExist);
-  let requestSuccess = resultList.some(item => item.requestSuccess);
+  let userNotExist = resultList.every(item => item && item.userNotExist);
+  let requestSuccess = resultList.some(item => item && item.requestSuccess);
 
   // backup cache
   let cacheWeiboData = await cache.get(`wbdata-${uid}`);
@@ -219,7 +219,7 @@ async function getByIndexAPI(uid) {
       },
     };
   } catch (err) {
-    if (err.response && err.response.status === 418) {
+    if (err.response && [418, 403].includes(err.response.status)) {
       avaliableMethod.disable('indexAPI');
       requestSuccess = false;
       return;
@@ -335,6 +335,6 @@ async function getWeiboDetail(id) {
       return Promise.reject(err);
     }
   });
-  cache.set(key, data, detailExpire);
+  cache.set(key, result, detailExpire);
   return result;
 }
