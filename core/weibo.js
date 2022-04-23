@@ -48,8 +48,8 @@ exports.fetchRSS = async function (uid, options) {
     // metadata
     var feed = new RSS({
       site_url: "https://weibo.com/" + uid,
-      title: weiboData.user.screen_name + '的微博',
-      description: weiboData.user.description,
+      title: weiboData.user ? weiboData.user.screen_name + '的微博' : '',
+      description: weiboData.user ? weiboData.user.description : '',
       generator: 'https://github.com/zgq354/weibo-rss',
       ttl: options.ttl
     });
@@ -98,10 +98,6 @@ async function getWeiboData(uid) {
   let resultList = [];
   let tempResultObject = await getByIndexAPI(uid);
   resultList.push(tempResultObject);
-  if (!tempResultObject.requestSuccess || tempResultObject.userNotExist) {
-    tempResultObject = await getByProfileInfo(uid);
-    resultList.push(tempResultObject);
-  }
 
   // result
   let weiboData;
@@ -139,11 +135,6 @@ const avaliableMethod = {
       lastUpdatedTime: Date.now(),
       retryDelay: 600000,
     },
-    profileInfo: {
-      enable: true,
-      lastUpdatedTime: Date.now(),
-      retryDelay: 600000,
-    },
     weiboDetail: {
       enable: true,
       lastUpdatedTime: Date.now(),
@@ -160,7 +151,7 @@ const avaliableMethod = {
   disable: function (name) {
     this.methods[name].enable = false;
     this.methods[name].lastUpdatedTime = Date.now();
-    logger.debug(`Disable function ${name}`);
+    logger.info(`Disable function ${name}`);
   }
 };
 
@@ -169,10 +160,6 @@ const userinfoExpire = 3 * 24 * 3600;
 const detailExpire = 7 * 24 * 3600;
 
 // 并发任务队列
-const profileInfoQueue = new Queue({
-  concurrency: 1
-});
-
 const indexAPIQueue = new Queue({
   concurrency: 1
 });
@@ -284,53 +271,6 @@ async function getIndexUserInfo(uid) {
   return {
     userNotExist,
     userInfo
-  };
-}
-
-/**
- * profile/info
- */
-async function getByProfileInfo(uid) {
-  logger.debug(`getByProfileInfo: ${uid}`);
-  if (!avaliableMethod.check('profileInfo')) {
-    return {
-      requestSuccess: false,
-    };
-  }
-
-  let requestSuccess = false;
-  let userNotExist = false;
-  // wait queue
-  await profileInfoQueue.add(utils.delayFunc(Math.floor(Math.random() * 100)));
-  const weiboData = await axiosInstance.get(`https://m.weibo.cn/profile/info?uid=${uid}`, {
-    headers: {
-      'MWeibo-Pwa': 1,
-      'Referer': `https://m.weibo.cn/profile/${uid}`,
-      'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1',
-      'X-Requested-With': 'XMLHttpRequest'
-    }
-  }).then(res => {
-    requestSuccess = true;
-    const data = res.data || {};
-    if (typeof data !== 'object' || data.ok !== 1) {
-      userNotExist = true;
-      return;
-    }
-    return data.data;
-  }).catch(err => {
-    if (err.response && err.response.status === 418) {
-      avaliableMethod.disable('profileInfo');
-      requestSuccess = false;
-      return;
-    } else {
-      return Promise.reject(err);
-    }
-  });
-
-  return {
-    requestSuccess,
-    userNotExist,
-    weiboData
   };
 }
 

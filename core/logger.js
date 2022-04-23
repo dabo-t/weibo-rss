@@ -1,11 +1,11 @@
 /**
  * Created by qing on 17-10-2.
  */
+const config = require('../config');
 
-var logger = require('tracer').colorConsole({
+const logger = require('tracer').colorConsole({
   format : "[{{timestamp}}] [{{title}}] {{message}}",
-  level: 'info',
+  level: config.debug ? 'debug' : 'info',
 });
-
 
 module.exports = logger;
