@@ -114,7 +114,7 @@ async function getWeiboData(uid) {
     cache.set(`wbdata-${uid}`, tempResultObject.weiboData, 86400000);
   }
 
-  if (!tempResultObject.userNotExist) {
+  if (!tempResultObject.userNotExist && requestSuccess) {
     weiboData = await handleLongText(tempResultObject.weiboData);
   }
 
