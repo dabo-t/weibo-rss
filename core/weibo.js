@@ -13,7 +13,7 @@ const https = require('https');
 const httpsAgent = new https.Agent({ keepAlive: true });
 
 const axiosInstance = axios.create({
-  timeout: 3000,
+  timeout:8000,
   httpsAgent
 });
 
@@ -30,7 +30,7 @@ exports.fetchRSS = async function (uid, options) {
   }
   // TTL
   if (options.ttl === undefined) {
-    options.ttl = 15;
+    options.ttl = 10;
   }
   // 表情图标
   if (options.emoji === undefined) {
