@@ -150,7 +150,7 @@ exports.formatStatus = (status, largePic = true, emoji = false) => {
   //问答图标处理
   tempHTML = tempHTML.replace(/<span class='url-icon'><img style='width: 1rem;height: 1rem' src='https:\/\/h5.sinaimg.cn\/upload\/2016\/11\/23\/433\/wenda_icon_default.png'><\/span>/g,'');
   //##处理
-  tempHTML = tempHTML.replace(/">#(.*?)#/g,'">#$1# ')
+  //tempHTML = tempHTML.replace(/">#(.*?)#/g,'">#$1# ')
 
   // 微博配图
   if (status.pics) {
