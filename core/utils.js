@@ -178,6 +178,7 @@ exports.formatStatus = (status, largePic = true, emoji = false) => {
   //格式处理
   //tempHTML = tempHTML.replace(/<span class="url-icon">(.*?)<\/span>/g,'$1')
   tempHTML += "<br>";
+  tempHTML = tempHTML.replace(/<\/p><\/div><br>/g,'</p></div>');
   return tempHTML;
 };
 
