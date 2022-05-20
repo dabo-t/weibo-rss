@@ -113,8 +113,8 @@ exports.formatStatus = (status, largePic = true, emoji = false) => {
     if (status.retweeted_status.user) {
       tempHTML += '<div style="border-left: 3px solid gray; padding-left: 1em;">' +
         '转发 <a href="https://weibo.com/' + status.retweeted_status.user.id + '" target="_blank">@' + status.retweeted_status.user.screen_name + '</a>: ' +
-        exports.formatStatus(status.retweeted_status, largePic, emoji) +
-        '</div>';
+        exports.formatStatus(status.retweeted_status, largePic, emoji) + `<p>` + new Date(status.retweeted_status.created_at).toLocaleString() +
+        '</p></div>';
     }
   }
   
