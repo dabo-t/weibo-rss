@@ -171,6 +171,56 @@ exports.formatStatus = (status, largePic = true, emoji = false) => {
     });
   }
   
+  //视频
+        const pageInfo = status.page_info;
+        const livePhotos = status.pics && status.pics.filter((pic) => pic.type === 'livephotos' && pic.videoSrc);
+        let video = '<br clear="both" /><div style="clear: both"></div>';
+        let anyVideo = false;
+        if (livePhotos) {
+            livePhotos.forEach((livePhoto) => {
+                video += `<video controls="controls" poster="${(livePhoto.large && livePhoto.large.url) || livePhoto.url}" src="${livePhoto.videoSrc}" style="width: 100%"></video>`;
+                anyVideo = true;
+            });
+        }
+        if (pageInfo && pageInfo.type === 'video') {
+            const pagePic = pageInfo.page_pic;
+            const posterUrl = pagePic ? pagePic.url : '';
+            const pageUrl = pageInfo.page_url; // video page url
+            const mediaInfo = pageInfo.media_info || {}; // stream_url, stream_url_hd; deprecated: mp4_720p_mp4, mp4_hd_url, mp4_sd_url
+            const urls = pageInfo.urls || {}; // mp4_720p_mp4, mp4_hd_mp4, hevc_mp4_hd, mp4_ld_mp4
+
+            const video720p = urls.mp4_720p_mp4 || mediaInfo.mp4_720p_mp4 || '';
+            const videoHd = urls.mp4_hd_mp4 || mediaInfo.mp4_hd_url || mediaInfo.stream_url_hd || '';
+            const videoHdHevc = urls.hevc_mp4_hd || '';
+            const videoLd = urls.mp4_ld_mp4 || mediaInfo.mp4_sd_url || mediaInfo.stream_url || '';
+
+            const hasVideo = video720p || videoHd || videoHdHevc || videoLd;
+
+            if (hasVideo) {
+                video += `<video controls="controls" poster="${posterUrl}" style="width: 100%">`;
+                if (video720p) {
+                    video += `<source src="${video720p}">`;
+                }
+                if (videoHd) {
+                    video += `<source src="${videoHd}">`;
+                }
+                if (videoHdHevc) {
+                    video += `<source src="${videoHdHevc}">`;
+                }
+                if (videoLd) {
+                    video += `<source src="${videoLd}">`;
+                }
+                if (pageUrl) {
+                    video += `<p>视频无法显示，请前往<a href="${pageUrl}" target="_blank" rel="noopener noreferrer">微博视频</a>观看。</p>`;
+                }
+                video += '</video>';
+                anyVideo = true;
+            }
+        }
+        if (anyVideo) {
+            tempHTML += video;
+        }
+  
   //表情图像链接头补全
   tempHTML = tempHTML.replace(/src=\"\//g,'src="https:/');
   //格式处理
