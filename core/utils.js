@@ -177,7 +177,7 @@ exports.formatStatus = (status, largePic = true, emoji = false) => {
         let anyVideo = false;
         if (livePhotos) {
             livePhotos.forEach((livePhoto) => {
-                video += `<video controls="controls" poster="${(livePhoto.large && livePhoto.large.url) || livePhoto.url}" src="${livePhoto.videoSrc}" style="width: 100%"></video>`;
+                video += `<br><video controls="controls" poster="${(livePhoto.large && livePhoto.large.url) || livePhoto.url}" src="${livePhoto.videoSrc}" style="width: 100%"></video>`;
                 anyVideo = true;
             });
         }
@@ -196,7 +196,7 @@ exports.formatStatus = (status, largePic = true, emoji = false) => {
             const hasVideo = video720p || videoHd || videoHdHevc || videoLd;
 
             if (hasVideo) {
-                video += `<video controls="controls" poster="${posterUrl}" style="width: 100%">`;
+                video += `<br><video controls="controls" poster="${posterUrl}" style="width: 100%">`;
                 if (video720p) {
                     video += `<source src="${video720p}">`;
                 }
