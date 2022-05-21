@@ -163,11 +163,10 @@ exports.formatStatus = (status, largePic = true, emoji = false) => {
     } else {
       photoArr = [...status.pics];
     }
-    
       tempHTML += "<br>";
     photoArr.forEach(function (item) {
       tempHTML += "<br>";
-      tempHTML += '<img src="' + (largePic ? item.large.url : item.url) + '" width=800">';
+      tempHTML += '<img src="' + (largePic ? item.large.url : item.url) + '" referrerpolicy="no-referrer width=800">';
     });
   }
   
