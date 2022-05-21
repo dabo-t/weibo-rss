@@ -151,6 +151,9 @@ exports.formatStatus = (status, largePic = true, emoji = false) => {
   tempHTML = tempHTML.replace(/<span class='url-icon'><img style='width: 1rem;height: 1rem' src='https:\/\/h5.sinaimg.cn\/upload\/2016\/11\/23\/433\/wenda_icon_default.png'><\/span>/g,'');
   //##处理
   //tempHTML = tempHTML.replace(/">#(.*?)#/g,'">#$1# ')
+  //图片评论2
+  tempHTML = tempHTML.replace(/<a href="(.*?)" data-hide="" style="color:#09f!important;text-decoration:none!important;"><br>查看图片 <\/a>/g,'<br><a href="$1" style="color:#09f!important;text-decoration:none !important;">查看图片 </a><br><img src="$1" referrerpolicy="no-referrer" width="800">');
+  
 
   // 微博配图
   if (status.pics) {
