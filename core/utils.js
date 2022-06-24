@@ -104,7 +104,7 @@ exports.formatStatus = (status, largePic = true, emoji = false) => {
     if (url_short) {
       tempHTML = tempHTML.replace(new RegExp(url_short, 'g'), url_long);
     }
-  });
+  });  
 
   // 转发的微博
   if (status.retweeted_status) {
@@ -115,6 +115,7 @@ exports.formatStatus = (status, largePic = true, emoji = false) => {
         '转发 <a href="https://weibo.com/' + status.retweeted_status.user.id + '" target="_blank">@' + status.retweeted_status.user.screen_name + '</a>: ' +
         exports.formatStatus(status.retweeted_status, largePic, emoji) + `<p>` + new Date(status.retweeted_status.created_at).toLocaleString() +
         '</p></div>';
+      tempHTML = tempHTML.replace(/<br><video controls="controls"/g,'<br><br><video controls="controls"');
     }
   }
   
@@ -122,6 +123,7 @@ exports.formatStatus = (status, largePic = true, emoji = false) => {
   tempHTML = tempHTML.replace(/src='\/\//g,'src=\'https://');
   //视频图标处理
   tempHTML = tempHTML.replace(/<span class='url-icon'><img style='width: 1rem;height: 1rem' src='http(s)?:\/\/h5.sinaimg.cn\/upload\/2015\/09\/25\/3\/timeline_card_small_video_default.png'><\/span>/g,'<br>📹');
+  tempHTML = tempHTML.replace(/<span class='url-icon'><img style='width: 1rem;height: 1rem' src='https:\/\/h5.sinaimg.cn\/upload\/2015\/09\/25\/3\/timeline_card_small_movie_default.png'><\/span>/g,'🎬 ');
   //地点图标处理
   tempHTML = tempHTML.replace(/<span class='url-icon'><img style='width: 1rem;height: 1rem' src='http(s)?:\/\/h5.sinaimg.cn\/upload\/2015\/09\/25\/3\/timeline_card_small_location_default.png'><\/span>/g,'<br>📍');
   //购物车图标处理
@@ -136,97 +138,102 @@ exports.formatStatus = (status, largePic = true, emoji = false) => {
   //音乐图标处理
   tempHTML = tempHTML.replace(/<span class='url-icon'><img style='width: 1rem;height: 1rem' src='http(s)?:\/\/h5.sinaimg.cn\/upload\/2015\/09\/25\/3\/timeline_card_small_music_default.png'><\/span>/g,' 🎵');
   //表情转文字
-  tempHTML = tempHTML.replace(/<span class="url-icon"><img alt=(.*?) src="(.*?)" style="width:1em; height:1em;" \/><\/span>/g,' $1 ');
-  //图片评论处理
-  tempHTML = tempHTML.replace(/<a data-url="http:\/\/t.cn\/(.*?)" href="(.*?).jpg" data-hide=""><br>(.*?)<\/a><br><br><div style="border-left: 3px solid gray; padding-left: 1em;">/g,'<br><a href="$2.jpg" style="color:#09f!important;text-decoration:none !important;">查看图片</a><br><img src="$2.jpg" width="500"><br><br><div style="border-left: 3px solid gray; padding-left: 1em;">');
+  tempHTML = tempHTML.replace(/<span class="url-icon"><img alt=(.*?) src="(.*?)" style="width:1em; height:1em;" \/><\/span>/g,' $1 ');   
   //链接图标处理
   tempHTML = tempHTML.replace(/<span class='url-icon'><img style='width: 1rem;height: 1rem' src='http(s)?:\/\/h5.sinaimg.cn\/upload\/2015\/09\/25\/3\/timeline_card_small_web_default.png'><\/span>/g, ' 🔗');
   tempHTML = tempHTML.replace(/<span class='url-icon'><img style='width: 1rem;height: 1rem' src='http(s)?:\/\/h5.sinaimg.cn\/upload\/2015\/09\/25\/3\/timeline_card_small_weibo_default.png'><\/span>/g, ' 🔗');
   //文章图标处理
   tempHTML = tempHTML.replace(/<span class='url-icon'><img style='width: 1rem;height: 1rem' src='http(s)?:\/\/h5.sinaimg.cn\/upload\/2015\/09\/25\/3\/timeline_card_small_article_default.png'><\/span>/g, '<br>📄');
+  //问答图标处理
+  tempHTML = tempHTML.replace(/<span class='url-icon'><img style='width: 1rem;height: 1rem' src='https:\/\/h5.sinaimg.cn\/upload\/2016\/11\/23\/433\/wenda_icon_default.png'><\/span>/g,'');
+  //图片评论
+  tempHTML = tempHTML.replace(/<a  href="(.*?)" data-hide=""><br><span class="surl-text">(查看图片|评论配图)<\/span><\/a>/g,'<a href="$1"> 评论配图 </a><br><br><img src="$1" referrerpolicy="no-referrer" width="400">');
+  tempHTML = tempHTML.replace(/referrerpolicy="no-referrer" width="400"><br><br><div style="border-left: 3px solid gray; padding-left: 1em;">/g,'referrerpolicy="no-referrer" width="400"><br><div style="border-left: 3px solid gray; padding-left: 1em;">');
   //链接样式处理
   tempHTML = tempHTML.replace(/<a (.*?)>/g,'<a $1 style="color:#09f!important;text-decoration:none!important;">');
   tempHTML = tempHTML.replace(/<\/a>/g,' </a>');
-  //问答图标处理
-  tempHTML = tempHTML.replace(/<span class='url-icon'><img style='width: 1rem;height: 1rem' src='https:\/\/h5.sinaimg.cn\/upload\/2016\/11\/23\/433\/wenda_icon_default.png'><\/span>/g,'');
- 
+  tempHTML = tempHTML.replace(/style="color:#09f!important;text-decoration:none!important;" style="color:#09f!important;text-decoration:none!important;"/g,'style="color:#09f!important;text-decoration:none!important;"'); 
+
+  tempHTML += "<br>";
 
   // 微博配图
   if (status.pics) {
     let photoArr = [];
     if (typeof status.pics === 'object' && !Array.isArray(status.pics)) {
       // ignore: type = 'livephotos'
-      photoArr = Object.values(status.pics)
-        .filter(pic => pic.type !== 'livephotos');
+      photoArr = Object.values(status.pics).filter(pic => pic.type !== 'livephotos');
       logger.info('live:', status.id);
     } else {
       photoArr = [...status.pics];
     }
-      tempHTML += "<br>";
     photoArr.forEach(function (item) {
       tempHTML += "<br>";
-      tempHTML += '<img src="' + (largePic ? item.large.url : item.url) + '" referrerpolicy="no-referrer" width=800">';
+      tempHTML += '<img src="' + (largePic ? item.large.url : item.url) + '" referrerpolicy="no-referrer" width="800">';
     });
   }
   
   //视频
-        const pageInfo = status.page_info;
-        const livePhotos = status.pics && status.pics.filter((pic) => pic.type === 'livephotos' && pic.videoSrc);
-        let video = '<br clear="both" /><div style="clear: both"></div>';
-        let anyVideo = false;
-        if (livePhotos) {
-            livePhotos.forEach((livePhoto) => {
-                video += `<br><video controls="controls" poster="${(livePhoto.large && livePhoto.large.url) || livePhoto.url}" src="${livePhoto.videoSrc}" style="width: 100%"></video>`;
-                anyVideo = true;
-            });
-        }
-        if (pageInfo && pageInfo.type === 'video') {
-            const pagePic = pageInfo.page_pic;
-            const posterUrl = pagePic ? pagePic.url : '';
-            const pageUrl = pageInfo.page_url; // video page url
-            const mediaInfo = pageInfo.media_info || {}; // stream_url, stream_url_hd; deprecated: mp4_720p_mp4, mp4_hd_url, mp4_sd_url
-            const urls = pageInfo.urls || {}; // mp4_720p_mp4, mp4_hd_mp4, hevc_mp4_hd, mp4_ld_mp4
+  const pageInfo = status.page_info;
+  const livePhotos = status.pics && status.pics.filter((pic) => pic.type === 'livephotos' && pic.videoSrc);
+  let video = '';
+  let anyVideo = false;
+  if (livePhotos) {
+      livePhotos.forEach((livePhoto) => {
+          video += `<br><br><video controls="controls" poster="${(livePhoto.large && livePhoto.large.url) || livePhoto.url}" src="${livePhoto.videoSrc}" style="width: 100%"></video>`;
+          anyVideo = true;
+      });
+  }
+  if (pageInfo && pageInfo.type === 'video') {
+      const pagePic = pageInfo.page_pic;
+      const posterUrl = pagePic ? pagePic.url : '';
+      const pageUrl = pageInfo.page_url; // video page url
+      const mediaInfo = pageInfo.media_info || {}; // stream_url, stream_url_hd; deprecated: mp4_720p_mp4, mp4_hd_url, mp4_sd_url
+      const urls = pageInfo.urls || {}; // mp4_720p_mp4, mp4_hd_mp4, hevc_mp4_hd, mp4_ld_mp4
 
-            const video720p = urls.mp4_720p_mp4 || mediaInfo.mp4_720p_mp4 || '';
-            const videoHd = urls.mp4_hd_mp4 || mediaInfo.mp4_hd_url || mediaInfo.stream_url_hd || '';
-            const videoHdHevc = urls.hevc_mp4_hd || '';
-            const videoLd = urls.mp4_ld_mp4 || mediaInfo.mp4_sd_url || mediaInfo.stream_url || '';
+      const video720p = urls.mp4_720p_mp4 || mediaInfo.mp4_720p_mp4 || '';
+      const videoHd = urls.mp4_hd_mp4 || mediaInfo.mp4_hd_url || mediaInfo.stream_url_hd || '';
+      const videoHdHevc = urls.hevc_mp4_hd || '';
+      const videoLd = urls.mp4_ld_mp4 || mediaInfo.mp4_sd_url || mediaInfo.stream_url || '';
 
-            const hasVideo = video720p || videoHd || videoHdHevc || videoLd;
+      const hasVideo = video720p || videoHd || videoHdHevc || videoLd;
 
-            if (hasVideo) {
-                video += `<br><video controls="controls" poster="${posterUrl}" style="width: 100%">`;
-                if (video720p) {
-                    video += `<source src="${video720p}">`;
-                }
-                if (videoHd) {
-                    video += `<source src="${videoHd}">`;
-                }
-                if (videoHdHevc) {
-                    video += `<source src="${videoHdHevc}">`;
-                }
-                if (videoLd) {
-                    video += `<source src="${videoLd}">`;
-                }
-                if (pageUrl) {
-                    video += `<p>视频无法显示，请前往<a href="${pageUrl}" target="_blank" rel="noopener noreferrer">微博视频</a>观看。</p>`;
-                }
-                video += '</video>';
-                anyVideo = true;
-            }
-        }
-        if (anyVideo) {
-            tempHTML += video;
-        }
-  
+      if (hasVideo) {
+          video += `<br><video controls="controls" poster="${posterUrl}" style="width: 100%">`;
+          if (video720p) {
+              video += `<source src="${video720p}">`;
+          }
+          if (videoHd) {
+              video += `<source src="${videoHd}">`;
+          }
+          if (videoHdHevc) {
+              video += `<source src="${videoHdHevc}">`;
+          }
+          if (videoLd) {
+              video += `<source src="${videoLd}">`;
+          }
+          if (pageUrl) {
+              video += `<p>视频无法显示，请前往<a href="${pageUrl}" target="_blank" rel="noopener noreferrer">微博视频</a>观看。</p>`;
+          }
+          video += '</video>';
+          anyVideo = true;
+      }
+  }
+  video += '<br>';
+  if (anyVideo) {
+      tempHTML += video;
+  }
+
+  //换行
+  tempHTML = tempHTML.replace(/<br \/>/g,'<br>');
+  //视频换行处理
+  tempHTML = tempHTML.replace(/<br><br><br><video controls="controls"/g,'<br><br><video controls="controls"');
+  //tempHTML = tempHTML.replace(/.jpg" referrerpolicy="no-referrer" width="800"><br><br><video controls="controls"/g,'.jpg" referrerpolicy="no-referrer" width="800"><br><video controls="controls"');
   //表情图像链接头补全
   tempHTML = tempHTML.replace(/src=\"\//g,'src="https:/');
   //格式处理
-  tempHTML = tempHTML.replace(/<span class="surl-text">(.*?)<\/span>/g,'$1');
-  tempHTML += "<br>";
+  tempHTML = tempHTML.replace(/<span class="surl-text">([\s\S]*?)<\/span>/g,'$1');
   tempHTML = tempHTML.replace(/<\/p><\/div><br>/g,'</p></div>');
-  //图片评论
-  tempHTML = tempHTML.replace(/<a href="(.*?)" data-hide="" style="color:#09f!important;text-decoration:none!important;"><br>查看图片 <\/a>/g,'<br><a href="$1" style="color:#09f!important;text-decoration:none !important;">查看图片 </a><br><img src="$1" referrerpolicy="no-referrer" width="800">');
+  //tempHTML = tempHTML.replace(/<img src="https:\/\/images.weserv.nl\/\?url=https:\/\/zzx.sinaimg.cn\/largeb\//g,'<img src="https://zzx.sinaimg.cn/largeb/');
   return tempHTML;
 };
 
